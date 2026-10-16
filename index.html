@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <!-- CSP: sin recursos externos. Los hashes se recalculan si editas el CSS/JS y video (ver instrucciones). frame-ancestors NO funciona en meta: configúralo como header en el servidor. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data:; media-src 'self' file:; style-src 'sha256-lLmKySP/GWHtjb/Xo6d598V19kkUxPwcQNrpYr9asjo='; script-src 'sha256-VQwsEDZa/DLRtXmHnFdLEO5UikC3fg2xFQUvUi/Fg3g='; connect-src 'self'; form-action 'self'; base-uri 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data:; media-src 'self' file:; style-src 'sha256-lLmKySP/GWHtjb/Xo6d598V19kkUxPwcQNrpYr9asjo='; script-src 'sha256-MdFvO2PwjHpz9AtzHueYyHq8HG1gXqngUEWxT7OaNIw='; connect-src 'self'; form-action 'self'; base-uri 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>AFEE-PY | Asociación de Fuerzas Especiales Espartanos del Paraguay</title>
 <meta name="description" content="Asociación de Fuerzas Especiales Espartanos del Paraguay: Honor, Sacrificio, Hermandad. Conocé nuestra historia y legado.">
@@ -608,10 +608,14 @@ $$("[data-count]").forEach(el=>cio.observe(el));
 
 /* ===== ROUTER: cada opción del menú muestra su propia sección ===== */
 const links=$$("nav a"),views=$$(".view"),ids=views.map(v=>v.id);
+const institutionalVideo=$("#video-institucional video"),videoView=institutionalVideo.closest(".view");
 function show(id){
+ if(videoView.id!==id)institutionalVideo.pause();
  views.forEach(v=>v.classList.toggle("active",v.id===id));
  links.forEach(a=>{if(a.getAttribute("href")==="#"+id){a.setAttribute("aria-current","page");document.title=(id==="inicio"?"":a.textContent+" | ")+"AFEE-PY · Espartanos del Paraguay"}else a.removeAttribute("aria-current")});
 }
+new IntersectionObserver(entries=>{if(!entries[0].isIntersecting)institutionalVideo.pause()}).observe(institutionalVideo);
+document.addEventListener("visibilitychange",()=>{if(document.hidden)institutionalVideo.pause()});
 function route(){
  const h=location.hash.slice(1);if(h==="main")return;    // enlace "saltar al contenido"
  const tg=h&&!ids.includes(h)?document.getElementById(h):null;
